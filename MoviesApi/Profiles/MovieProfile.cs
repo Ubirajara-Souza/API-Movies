@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MoviesApi.Dtos;
+using MoviesApi.Dtos.Movie;
 using MoviesApi.Models;
 using MoviesApi.Views;
 

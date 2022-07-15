@@ -10,6 +10,8 @@ namespace MoviesApi.Database
         public DbSet<MovieModel> Movies { get; set; }
 
         public DbSet<MovieTheaterModel> MovieTheaters { get; set; }
+
+        public DbSet<AddressModel> Address { get; set; }
     }
 }
 

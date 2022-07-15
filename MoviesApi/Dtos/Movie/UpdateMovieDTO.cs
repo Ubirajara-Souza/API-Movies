@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MoviesApi.Dtos
+namespace MoviesApi.Dtos.Movie
 {
     public class UpdateMovieDTO
     {
