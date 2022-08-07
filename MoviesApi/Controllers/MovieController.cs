@@ -37,11 +37,10 @@ namespace MoviesApi.Controllers
         [HttpGet]
         public IEnumerable<MovieViews> ListMovie()
         {
-            IEnumerable<MovieModel> movie = _context.Movies.ToList();
+            IEnumerable<MovieModel> movie = _context.Movies;
 
             if (movie != null)
             {
-
                 IEnumerable<MovieViews> movieViews = _mapper.Map<IEnumerable<MovieViews>>(movie);
                 return movieViews.OrderBy(m => m.Title);
             }

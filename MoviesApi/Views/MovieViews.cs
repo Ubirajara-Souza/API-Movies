@@ -1,6 +1,8 @@
-﻿namespace MoviesApi.Views
+﻿using MoviesApi.Models;
+
+namespace MoviesApi.Views
 {
-    public class MovieViews
+    public class MovieViews : EntityBase
     {
 
         public string Title { get; set; }

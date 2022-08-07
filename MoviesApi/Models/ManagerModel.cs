@@ -5,21 +5,13 @@ using System.Text.Json.Serialization;
 
 namespace MoviesApi.Models
 {
-    [Table("Cinema")]
-    public class MovieTheaterModel : EntityBase
+
+    [Table("Gerente")]
+    public class ManagerModel : EntityBase
     {
         [Required(ErrorMessage = "O campo Nome é obrigatório")]
         public string Name { get; set; }
-
-        public virtual AddressModel Address { get; set; }
-
-        public int AddressID { get; set; }
-
-        public virtual ManagerModel Manager { get; set; }
-
-        public int ManagerID { get; set; }
-
         [JsonIgnore]
-        public virtual List<SessionModel> Session { get; set; }
+        public virtual List<MovieTheaterModel> MovieTheater { get; set; }
     }
 }

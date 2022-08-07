@@ -1,12 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MoviesApi.Dtos.MovieTheater
+namespace MoviesApi.Dtos.Manager
 {
-    public class MovieTheaterDTO
+    public class ManagerDTO
     {
         [Required(ErrorMessage = "O campo Nome é obrigatório")]
         public string Name { get; set; }
-        public int AddressID { get; set; }
-        public int ManagerID { get; set; }
     }
 }

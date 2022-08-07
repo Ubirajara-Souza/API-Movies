@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace MoviesApi.Models
 {
@@ -24,5 +25,9 @@ namespace MoviesApi.Models
 
         [Required(ErrorMessage = "O campo Cep é obrigatório")]
         public string ZipCode { get; set; }
+        
+        [JsonIgnore]
+        public virtual MovieTheaterModel MovieTheater { get; set; }
+
     }
 }

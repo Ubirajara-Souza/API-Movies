@@ -41,3 +41,5 @@ C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\obj\Debug\net5.0\refint\MoviesAp
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\obj\Debug\net5.0\MoviesApi.pdb
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\obj\Debug\net5.0\MoviesApi.genruntimeconfig.cache
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\obj\Debug\net5.0\ref\MoviesApi.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\Castle.Core.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Proxies.dll
