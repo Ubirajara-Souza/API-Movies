@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MoviesApi.Database;
+using MoviesApi.Services;
 using System;
 
 namespace MoviesApi {
@@ -22,6 +23,13 @@ namespace MoviesApi {
         {
             services.AddDbContext<MoviesApiContext>(opts =>
                        opts.UseLazyLoadingProxies().UseNpgsql(Configuration.GetConnectionString("MoviesApiConnection")));
+            
+            services.AddScoped<MovieService, MovieService>();
+            services.AddScoped<AddressService, AddressService>();
+            services.AddScoped<ManagerService, ManagerService>();
+            services.AddScoped<MovieTheaterService, MovieTheaterService>();
+            services.AddScoped<SessionService, SessionService>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
