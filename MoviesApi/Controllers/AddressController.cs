@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using MoviesApi.Database;
+﻿using Microsoft.AspNetCore.Mvc;
 using MoviesApi.Dtos.Address;
-using MoviesApi.Models;
+using MoviesApi.Services;
 using MoviesApi.Views;
 using System.Collections.Generic;
-using System.Linq;
+using FluentResults;
 
 namespace MoviesApi.Controllers
 {
@@ -13,86 +11,66 @@ namespace MoviesApi.Controllers
     [Route("api/[controller]")]
     public class AddressController : ControllerBase
     {
-        private readonly MoviesApiContext _context;
-        private readonly IMapper _mapper;
+        private AddressService _addressService;
 
-        public AddressController(MoviesApiContext context, IMapper mapper)
+        public AddressController(AddressService addressService)
         {
-            _context = context;
-            _mapper = mapper;
+            _addressService = addressService;
         }
 
         [HttpPost]
         public IActionResult AddAddress([FromBody] AddressDTO addressDTO)
         {
+            AddressViews addressViews = _addressService.AddAddress(addressDTO);
 
-            AddressModel address = _mapper.Map<AddressModel>(addressDTO);
-
-            _context.Address.Add(address);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(ListAddressById), new { Id = address.Id }, address);
+            return CreatedAtAction(nameof(ListAddressById), new { Id = addressViews.Id }, addressViews);
         }
 
         [HttpGet]
-        public IEnumerable<AddressViews> ListAddress()
+        public IActionResult ListAddress()
         {
-            IEnumerable<AddressModel> address = _context.Address.ToList();
+            IEnumerable<AddressViews> addressViews = _addressService.ListAddress();
 
-            if (address != null)
-            {
+            if (addressViews != null)
+                return Ok(addressViews);
 
-                IEnumerable<AddressViews> addressViews = _mapper.Map<IEnumerable<AddressViews>>(address);
-                return addressViews;
-            }
-
-            return null;
+            return NotFound();
         }
 
         [HttpGet("{id}")]
         public IActionResult ListAddressById(int id)
         {
+            AddressViews addressViews = _addressService.ListAddressById(id);
 
-            AddressModel address = _context.Address.FirstOrDefault(address => address.Id == id);
-            if (address != null)
-            {
-
-                AddressViews addressViews = _mapper.Map<AddressViews>(address);
+            if (addressViews != null)
                 return Ok(addressViews);
-            }
+
             return NotFound();
         }
-
 
         [HttpPut("{id}")]
         public IActionResult UpdateAddress(int id, [FromBody] UpdateAddressDTO addressDTO)
         {
+            Result result = _addressService.UpdateAddress(id, addressDTO);
 
-            AddressModel address = _context.Address.FirstOrDefault(address => address.Id == id);
-
-            if (address == null)
-            {
+            if (result.IsFailed)
                 return NotFound();
-            }
 
-            _mapper.Map(addressDTO, address);
-            _context.SaveChanges();
             return NoContent();
+
         }
+
 
         [HttpDelete("{id}")]
         public IActionResult DeleteAddress(int id)
         {
+            Result result = _addressService.DeleteAddress(id);
 
-            AddressModel address = _context.Address.FirstOrDefault(address => address.Id == id);
-
-            if (address == null)
-            {
+            if (result.IsFailed)
                 return NotFound();
-            }
 
-            _context.Remove(address);
-            _context.SaveChanges();
             return NoContent();
+
         }
     }
 }

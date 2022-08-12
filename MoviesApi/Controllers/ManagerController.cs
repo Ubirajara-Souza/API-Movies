@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using MoviesApi.Database;
+﻿using Microsoft.AspNetCore.Mvc;
 using MoviesApi.Dtos.Manager;
-using MoviesApi.Models;
+using MoviesApi.Services;
 using MoviesApi.Views;
 using System.Collections.Generic;
-using System.Linq;
+using FluentResults;
 
 namespace MoviesApi.Controllers
 {
@@ -14,68 +12,51 @@ namespace MoviesApi.Controllers
     [Route("api/[controller]")]
     public class ManagerController : ControllerBase
     {
-        private readonly MoviesApiContext _context;
-        private readonly IMapper _mapper;
+        private ManagerService _managerService;
 
-        public ManagerController(MoviesApiContext context, IMapper mapper)
+        public ManagerController(ManagerService managerService)
         {
-            _context = context;
-            _mapper = mapper;
+            _managerService = managerService;
         }
 
         [HttpPost]
         public IActionResult AddManager([FromBody] ManagerDTO managerDTO)
         {
+            ManagerViews managerViews = _managerService.AddManager(managerDTO);
 
-            ManagerModel manager = _mapper.Map<ManagerModel>(managerDTO);
-
-            _context.Manager.Add(manager);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(ListManagerById), new { Id = manager.Id }, manager);
+            return CreatedAtAction(nameof(ListManagerById), new { Id = managerViews.Id }, managerViews);
         }
 
         [HttpGet]
-        public IEnumerable<ManagerViews> ListManager()
+        public IActionResult ListManager()
         {
-            IEnumerable<ManagerModel> manager = _context.Manager.ToList();
+            IEnumerable<ManagerViews> managerViews = _managerService.ListManager();
 
-            if (manager != null)
-            {
+            if (managerViews != null)
+                return Ok(managerViews);
 
-                IEnumerable<ManagerViews> managerViews = _mapper.Map<IEnumerable<ManagerViews>>(manager);
-                return managerViews;
-            }
-
-            return null;
+            return NotFound();
         }
 
         [HttpGet("{id}")]
         public IActionResult ListManagerById(int id)
         {
+            ManagerViews managerViews = _managerService.ListManagerById(id);
 
-            ManagerModel manager = _context.Manager.FirstOrDefault(manager => manager.Id == id);
-            if (manager != null)
-            {
-
-                ManagerViews managerViews = _mapper.Map<ManagerViews>(manager);
+            if (managerViews != null)
                 return Ok(managerViews);
-            }
+
             return NotFound();
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteManager(int id)
         {
+            Result result = _managerService.DeleteManager(id);
 
-            ManagerModel manager = _context.Manager.FirstOrDefault(manager => manager.Id == id);
-
-            if (manager == null)
-            {
+            if (result.IsFailed)
                 return NotFound();
-            }
 
-            _context.Remove(manager);
-            _context.SaveChanges();
             return NoContent();
         }
     }
