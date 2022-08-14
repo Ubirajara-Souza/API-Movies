@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using FluentResults;
-using MoviesApi.Database;
-using MoviesApi.Dtos.MovieTheater;
-using MoviesApi.Models;
-using MoviesApi.Views;
+using MoviesApi.Domain.Dtos.Response;
+using MoviesApi.Domain.Dtos.Request.MovieTheater;
+using MoviesApi.Domain.Entities;
+using MoviesApi.Infra.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,12 +11,12 @@ namespace MoviesApi.Services
 {
     public class MovieTheaterService
     {
-        private readonly MoviesApiContext _context;
+        private MovieTheaterRepository _movieTheaterRepository;
         private readonly IMapper _mapper;
 
-        public MovieTheaterService(MoviesApiContext context, IMapper mapper)
+        public MovieTheaterService(MovieTheaterRepository movieTheaterRepository, IMapper mapper)
         {
-            _context = context;
+            _movieTheaterRepository = movieTheaterRepository;
             _mapper = mapper;
         }
 
@@ -24,15 +24,14 @@ namespace MoviesApi.Services
         {
 
             MovieTheaterModel movieTheater = _mapper.Map<MovieTheaterModel>(movieTheaterDTO);
-            _context.MovieTheaters.Add(movieTheater);
-            _context.SaveChanges();
+            _movieTheaterRepository.AddMovieTheater(movieTheater);
 
             return _mapper.Map<MovieTheaterViews>(movieTheater);
         }
 
         public IEnumerable<MovieTheaterViews> ListMovieTheater()
         {
-            IEnumerable<MovieTheaterModel> movieTheater = _context.MovieTheaters;
+            IEnumerable<MovieTheaterModel> movieTheater = _movieTheaterRepository.ListMovieTheater();
 
             if (movieTheater != null)
             {
@@ -45,7 +44,7 @@ namespace MoviesApi.Services
 
         public MovieTheaterViews ListMovieTheaterById(int id)
         {
-            MovieTheaterModel movieTheater = _context.MovieTheaters.FirstOrDefault(movieTheater => movieTheater.Id == id);
+            MovieTheaterModel movieTheater = _movieTheaterRepository.ListMovieTheaterById(id);
             if (movieTheater != null)
             {
                 MovieTheaterViews movieTheaterViews = _mapper.Map<MovieTheaterViews>(movieTheater);
@@ -57,7 +56,7 @@ namespace MoviesApi.Services
         public Result UpdateMovieTheater(int id, UpdateMovieTheaterDTO movieTheaterDTO)
         {
 
-            MovieTheaterModel movieTheater = _context.MovieTheaters.FirstOrDefault(movieTheater => movieTheater.Id == id);
+            MovieTheaterModel movieTheater = _movieTheaterRepository.ListMovieTheaterById(id);
 
             if (movieTheater == null)
             {
@@ -65,21 +64,20 @@ namespace MoviesApi.Services
             }
 
             _mapper.Map(movieTheaterDTO, movieTheater);
-            _context.SaveChanges();
+            _movieTheaterRepository.UpdateMovieTheater(id, movieTheater);
             return Result.Ok();
         }
 
         public Result DeleteMovieTheater(int id)
         {
-            MovieTheaterModel movieTheater = _context.MovieTheaters.FirstOrDefault(movieTheater => movieTheater.Id == id);
+            MovieTheaterModel movieTheater = _movieTheaterRepository.ListMovieTheaterById(id);
 
             if (movieTheater == null)
             {
                 return Result.Fail("Cinema Não encontrado");
             }
 
-            _context.Remove(movieTheater);
-            _context.SaveChanges();
+            _movieTheaterRepository.DeleteMovieTheater(id);
             return Result.Ok();
         }
     }

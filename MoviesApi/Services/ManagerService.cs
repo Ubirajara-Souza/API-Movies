@@ -1,37 +1,35 @@
 ﻿using AutoMapper;
 using FluentResults;
-using MoviesApi.Database;
-using MoviesApi.Dtos.Manager;
-using MoviesApi.Models;
-using MoviesApi.Views;
+using MoviesApi.Domain.Dtos.Response;
+using MoviesApi.Domain.Dtos.Request.Manager;
+using MoviesApi.Domain.Entities;
+using MoviesApi.Infra.Repositories;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MoviesApi.Services
 {
     public class ManagerService
     {
-        private readonly MoviesApiContext _context;
+        private ManagerRepository _managerRepository;
         private readonly IMapper _mapper;
 
-        public ManagerService(MoviesApiContext context, IMapper mapper)
+        public ManagerService(ManagerRepository managerRepository, IMapper mapper)
         {
-            _context = context;
+            _managerRepository = managerRepository;
             _mapper = mapper;
         }
 
         public ManagerViews AddManager(ManagerDTO managerDTO)
         {
             ManagerModel manager = _mapper.Map<ManagerModel>(managerDTO);
-            _context.Manager.Add(manager);
-            _context.SaveChanges();
+            _managerRepository.AddManager(manager);
 
             return _mapper.Map<ManagerViews>(manager);
         }
 
         public IEnumerable<ManagerViews> ListManager()
         {
-            IEnumerable<ManagerModel> manager = _context.Manager;
+            IEnumerable<ManagerModel> manager = _managerRepository.ListManager();
 
             if (manager != null)
             {
@@ -44,7 +42,7 @@ namespace MoviesApi.Services
 
         public ManagerViews ListManagerById(int id)
         {
-            ManagerModel manager = _context.Manager.FirstOrDefault(manager => manager.Id == id);
+            ManagerModel manager = _managerRepository.ListManagerById(id);
             if (manager != null)
             {
                 ManagerViews managerViews = _mapper.Map<ManagerViews>(manager);
@@ -54,15 +52,13 @@ namespace MoviesApi.Services
         }
         public Result DeleteManager(int id)
         {
-            ManagerModel manager = _context.Manager.FirstOrDefault(manager => manager.Id == id);
-
+            ManagerModel manager = _managerRepository.ListManagerById(id);
             if (manager == null)
             {
                 return Result.Fail("Gerente Não encontrado");
             }
 
-            _context.Remove(manager);
-            _context.SaveChanges();
+            _managerRepository.DeleteManager(id);
             return Result.Ok();
         }
     }

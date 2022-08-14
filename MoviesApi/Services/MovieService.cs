@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using FluentResults;
-using MoviesApi.Database;
-using MoviesApi.Dtos.Movie;
-using MoviesApi.Models;
-using MoviesApi.Views;
+using MoviesApi.Domain.Dtos.Response;
+using MoviesApi.Domain.Dtos.Request.Movie;
+using MoviesApi.Domain.Entities;
+using MoviesApi.Infra.Repositories;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,28 +11,26 @@ namespace MoviesApi.Services
 {
     public class MovieService
     {
-        private readonly MoviesApiContext _context;
+        private MovieRepository _movieRepository;
         private readonly IMapper _mapper;
 
-        public MovieService(MoviesApiContext context, IMapper mapper)
+        public MovieService(MovieRepository movieRepository, IMapper mapper)
         {
-            _context = context;
+            _movieRepository = movieRepository;
             _mapper = mapper;
         }
 
         public MovieViews AddMovie(MovieDTO movieDTO)
         {
-
             MovieModel movie = _mapper.Map<MovieModel>(movieDTO);
-            _context.Movies.Add(movie);
-            _context.SaveChanges();
-
+            _movieRepository.AddMovie(movie);
+  
             return _mapper.Map<MovieViews>(movie);
         }
 
         public IEnumerable<MovieViews> ListMovie()
         {
-            IEnumerable<MovieModel> movie = _context.Movies;
+            IEnumerable<MovieModel> movie = _movieRepository.ListMovie();
 
             if (movie != null)
             {
@@ -45,7 +43,7 @@ namespace MoviesApi.Services
 
         public MovieViews ListMovieById(int id)
         {
-            MovieModel movie = _context.Movies.FirstOrDefault(movie => movie.Id == id);
+            MovieModel movie = _movieRepository.ListMovieById(id);
             if (movie != null)
             {
                 MovieViews movieViews = _mapper.Map<MovieViews>(movie);
@@ -57,7 +55,7 @@ namespace MoviesApi.Services
         public Result UpdateMovie(int id, UpdateMovieDTO movieDTO)
         {
 
-            MovieModel movie = _context.Movies.FirstOrDefault(movie => movie.Id == id);
+            MovieModel movie = _movieRepository.ListMovieById(id);
 
             if (movie == null)
             {
@@ -65,21 +63,20 @@ namespace MoviesApi.Services
             }
 
             _mapper.Map(movieDTO, movie);
-            _context.SaveChanges();
+            _movieRepository.UpdateMovie(id, movie);
             return Result.Ok();
         }
 
         public Result DeleteMovie(int id)
         {
-            MovieModel movie = _context.Movies.FirstOrDefault(movie => movie.Id == id);
+            MovieModel movie = _movieRepository.ListMovieById(id);
 
             if (movie == null)
             {
                 return Result.Fail("Filme Não encontrado");
             }
 
-            _context.Remove(movie);
-            _context.SaveChanges();
+            _movieRepository.DeleteMovie(id);
             return Result.Ok();
         }
     }

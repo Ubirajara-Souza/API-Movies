@@ -1,5 +1,3 @@
-C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\appsettings.Development.json
-C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\appsettings.json
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\MoviesApi.exe
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\MoviesApi.deps.json
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\MoviesApi.runtimeconfig.json
@@ -43,3 +41,8 @@ C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\obj\Debug\net5.0\MoviesApi.genru
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\obj\Debug\net5.0\ref\MoviesApi.dll
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\Castle.Core.dll
 C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Proxies.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\FluentResults.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\appsettings.Development.json
+C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\appsettings.json
+C:\Users\Birinha\Desktop\C#\MoviesApi\MoviesApi\bin\Debug\net5.0\Properties\launchSettings.json

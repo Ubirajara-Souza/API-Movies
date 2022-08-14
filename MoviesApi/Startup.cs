@@ -5,12 +5,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using MoviesApi.Database;
+using MoviesApi.Infra.Repositories.BaseContext;
+using MoviesApi.Infra.Repositories;
 using MoviesApi.Services;
 using System;
 
-namespace MoviesApi {
-    public class Startup {
+namespace MoviesApi
+{
+    public class Startup
+    {
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -23,7 +26,13 @@ namespace MoviesApi {
         {
             services.AddDbContext<MoviesApiContext>(opts =>
                        opts.UseLazyLoadingProxies().UseNpgsql(Configuration.GetConnectionString("MoviesApiConnection")));
-            
+
+            services.AddScoped<MovieRepository, MovieRepository>();
+            services.AddScoped<AddressRepository, AddressRepository>();
+            services.AddScoped<ManagerRepository, ManagerRepository>();
+            services.AddScoped<MovieTheaterRepository, MovieTheaterRepository>();
+            services.AddScoped<SessionRepository, SessionRepository>();
+
             services.AddScoped<MovieService, MovieService>();
             services.AddScoped<AddressService, AddressService>();
             services.AddScoped<ManagerService, ManagerService>();
@@ -42,7 +51,8 @@ namespace MoviesApi {
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment()) {
+            if (env.IsDevelopment())
+            {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MoviesApi v1"));

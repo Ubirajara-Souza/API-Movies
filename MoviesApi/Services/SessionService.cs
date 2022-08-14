@@ -1,20 +1,19 @@
 ﻿using AutoMapper;
-using MoviesApi.Database;
-using MoviesApi.Dtos.Session;
-using MoviesApi.Models;
-using MoviesApi.Views;
-using System.Linq;
+using MoviesApi.Domain.Dtos.Response;
+using MoviesApi.Domain.Dtos.Request.Session;
+using MoviesApi.Domain.Entities;
+using MoviesApi.Infra.Repositories;
 
 namespace MoviesApi.Services
 {
     public class SessionService
     {
-        private readonly MoviesApiContext _context;
+        private SessionRepository _sessionRepository;
         private readonly IMapper _mapper;
 
-        public SessionService(MoviesApiContext context, IMapper mapper)
+        public SessionService(SessionRepository sessionRepository, IMapper mapper)
         {
-            _context = context;
+            _sessionRepository = sessionRepository;
             _mapper = mapper;
         }
 
@@ -22,15 +21,14 @@ namespace MoviesApi.Services
         {
 
             SessionModel session = _mapper.Map<SessionModel>(sessionDTO);
-            _context.Session.Add(session);
-            _context.SaveChanges();
+            _sessionRepository.AddSession(session);
 
             return _mapper.Map<SessionViews>(session);
         }
 
         public SessionViews ListSessionById(int id)
         {
-            SessionModel session = _context.Session.FirstOrDefault(session => session.Id == id);
+            SessionModel session = _sessionRepository.ListSessionById(id);
             if (session != null)
             {
                 SessionViews sessionViews = _mapper.Map<SessionViews>(session);
