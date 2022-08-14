@@ -1,11 +1,9 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using MoviesApi.Database;
+﻿using Microsoft.AspNetCore.Mvc;
 using MoviesApi.Dtos.MovieTheater;
-using MoviesApi.Models;
 using MoviesApi.Views;
 using System.Collections.Generic;
-using System.Linq;
+using FluentResults;
+using MoviesApi.Services;
 
 namespace MoviesApi.Controllers
 {
@@ -13,52 +11,41 @@ namespace MoviesApi.Controllers
     [Route("api/[controller]")]
     public class MovieTheaterController : ControllerBase
     {
-        private readonly MoviesApiContext _context;
-        private readonly IMapper _mapper;
+        private MovieTheaterService _movieTheaterService;
 
-        public MovieTheaterController(MoviesApiContext context, IMapper mapper)
+        public MovieTheaterController(MovieTheaterService movieTheaterService)
         {
-            _context = context;
-            _mapper = mapper;
+            _movieTheaterService = movieTheaterService;
         }
 
         [HttpPost]
         public IActionResult AddMovieTheater([FromBody] MovieTheaterDTO movieTheaterDTO)
         {
+            MovieTheaterViews movieTheaterViews = _movieTheaterService.AddMovieTheater(movieTheaterDTO);
 
-            MovieTheaterModel movieTheater = _mapper.Map<MovieTheaterModel>(movieTheaterDTO);
+            return CreatedAtAction(nameof(ListMovieTheaterById), new { Id = movieTheaterViews.Id }, movieTheaterViews);
 
-            _context.MovieTheaters.Add(movieTheater);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(ListMovieTheaterById), new { Id = movieTheater.Id }, movieTheater);
         }
 
         [HttpGet]
-        public IEnumerable<MovieTheaterViews> ListMovieTheater()
+        public IActionResult ListMovieTheater()
         {
-            IEnumerable<MovieTheaterModel> movieTheater = _context.MovieTheaters.ToList();
+            IEnumerable<MovieTheaterViews> movieTheaterViews = _movieTheaterService.ListMovieTheater();
 
-            if (movieTheater != null)
-            {
+            if (movieTheaterViews != null)
+                return Ok(movieTheaterViews);
 
-                IEnumerable<MovieTheaterViews> movieTheaterViews = _mapper.Map<IEnumerable<MovieTheaterViews>>(movieTheater);
-                return movieTheaterViews.OrderBy(m => m.Name);
-            }
-
-            return null;
+            return NotFound();
         }
 
         [HttpGet("{id}")]
         public IActionResult ListMovieTheaterById(int id)
         {
+            MovieTheaterViews movieTheaterViews = _movieTheaterService.ListMovieTheaterById(id);
 
-            MovieTheaterModel movieTheater = _context.MovieTheaters.FirstOrDefault(movieTheater => movieTheater.Id == id);
-            if (movieTheater != null)
-            {
-
-                MovieTheaterViews movieTheaterViews = _mapper.Map<MovieTheaterViews>(movieTheater);
+            if (movieTheaterViews != null)
                 return Ok(movieTheaterViews);
-            }
+
             return NotFound();
         }
 
@@ -66,32 +53,22 @@ namespace MoviesApi.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateMovieTheater(int id, [FromBody] UpdateMovieTheaterDTO movieTheaterDTO)
         {
+            Result result = _movieTheaterService.UpdateMovieTheater(id, movieTheaterDTO);
 
-            MovieTheaterModel movieTheater = _context.MovieTheaters.FirstOrDefault(movieTheater => movieTheater.Id == id);
-
-            if (movieTheater == null)
-            {
+            if (result.IsFailed)
                 return NotFound();
-            }
 
-            _mapper.Map(movieTheaterDTO, movieTheater);
-            _context.SaveChanges();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteMovieTheater(int id)
         {
+            Result result = _movieTheaterService.DeleteMovieTheater(id);
 
-            MovieTheaterModel movieTheater = _context.MovieTheaters.FirstOrDefault(movieTheater => movieTheater.Id == id);
-
-            if (movieTheater == null)
-            {
+            if (result.IsFailed)
                 return NotFound();
-            }
 
-            _context.Remove(movieTheater);
-            _context.SaveChanges();
             return NoContent();
         }
     }

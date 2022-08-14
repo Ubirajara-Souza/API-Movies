@@ -29,7 +29,6 @@ namespace MoviesApi.Database
                .WithMany(movieTheater => movieTheater.Session)
                .HasForeignKey(session => session.MovieTheaterID);
         }
-
         public DbSet<MovieModel> Movies { get; set; }
 
         public DbSet<MovieTheaterModel> MovieTheaters { get; set; }

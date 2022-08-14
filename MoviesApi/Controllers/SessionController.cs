@@ -1,10 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using MoviesApi.Database;
+﻿using Microsoft.AspNetCore.Mvc;
 using MoviesApi.Dtos.Session;
-using MoviesApi.Models;
+using MoviesApi.Services;
 using MoviesApi.Views;
-using System.Linq;
 
 namespace MoviesApi.Controllers
 {
@@ -13,37 +10,29 @@ namespace MoviesApi.Controllers
     [Route("api/[controller]")]
     public class SessionController : ControllerBase
     {
-        private readonly MoviesApiContext _context;
-        private readonly IMapper _mapper;
+        private SessionService _sessionService;
 
-        public SessionController(MoviesApiContext context, IMapper mapper)
+        public SessionController(SessionService sessionService)
         {
-            _context = context;
-            _mapper = mapper;
+            _sessionService = sessionService;
         }
 
         [HttpPost]
         public IActionResult AddSession([FromBody] SessionDTO sessionDTO)
         {
+            SessionViews sessionViews = _sessionService.AddSession(sessionDTO);
 
-            SessionModel session = _mapper.Map<SessionModel>(sessionDTO);
-
-            _context.Session.Add(session);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(ListSessionById), new { Id = session.Id }, session);
+            return CreatedAtAction(nameof(ListSessionById), new { Id = sessionViews.Id }, sessionViews);
         }
 
         [HttpGet("{id}")]
         public IActionResult ListSessionById(int id)
         {
+            SessionViews sessionViews = _sessionService.ListSessionById(id);
 
-            SessionModel session = _context.Session.FirstOrDefault(session => session.Id == id);
-            if (session != null)
-            {
-
-                SessionViews sessionViews = _mapper.Map<SessionViews>(session);
+            if (sessionViews != null)
                 return Ok(sessionViews);
-            }
+
             return NotFound();
         }
     }
