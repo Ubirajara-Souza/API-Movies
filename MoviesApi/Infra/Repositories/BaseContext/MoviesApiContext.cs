@@ -38,6 +38,7 @@ namespace MoviesApi.Infra.Repositories.BaseContext
         public DbSet<ManagerModel> Manager { get; set; }
 
         public DbSet<SessionModel> Session { get; set; }
+
     }
 }
 
