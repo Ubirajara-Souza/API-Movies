@@ -1,24 +1,29 @@
 ﻿using UserApi.Domain.Entities;
 using UserApi.Infra.Repositories.BaseContext;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using UserApi.Domain.Dtos.Request.User;
+using FluentResults;
 
 namespace UserApi.Infra.Repositories
 {
     public class UserRepository
     {
         protected readonly UserApiContext _context;
+        private UserManager<IdentityUser<int>> _userManager;
 
-        public UserRepository(UserApiContext context)
+        public UserRepository(UserApiContext context, UserManager<IdentityUser<int>> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        public UserModel AddUser(UserModel user)
+        public Task<IdentityResult> AddUser(IdentityUser<int> userIdentity, UserDTO userDTO)
         {
-            _context.User.Add(user);
-            _context.SaveChanges();
+            Task<IdentityResult> resultIdentity = _userManager.CreateAsync(userIdentity, userDTO.Password);
 
-            return user;
+            return resultIdentity;
         }
 
         public UserModel ListUserById(int id)

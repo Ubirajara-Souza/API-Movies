@@ -3,6 +3,9 @@ using UserApi.Domain.Dtos.Response;
 using UserApi.Domain.Dtos.Request.User;
 using UserApi.Domain.Entities;
 using UserApi.Infra.Repositories;
+using Microsoft.AspNetCore.Identity;
+using FluentResults;
+using System.Threading.Tasks;
 
 namespace UserApi.Services
 {
@@ -11,18 +14,23 @@ namespace UserApi.Services
         private UserRepository _userRepository;
         private readonly IMapper _mapper;
 
+
         public UserService(UserRepository userRepository, IMapper mapper)
         {
             _userRepository = userRepository;
             _mapper = mapper;
         }
 
-        public UserViews AddUser(UserDTO userDTO)
+        public Result AddUser(UserDTO userDTO)
         {
             UserModel User = _mapper.Map<UserModel>(userDTO);
-            _userRepository.AddUser(User);
+            IdentityUser<int> userIdentity = _mapper.Map<IdentityUser<int>>(User);
 
-            return _mapper.Map<UserViews>(User);
+            Task<IdentityResult> resultIdentity = _userRepository.AddUser(userIdentity, userDTO);
+
+            if (resultIdentity.Result.Succeeded)
+                return Result.Ok();
+            return Result.Fail("Falha ao cadastrar usuário");
         }
 
         public UserViews ListUserById(int id)
