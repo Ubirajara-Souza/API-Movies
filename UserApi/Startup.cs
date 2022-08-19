@@ -32,8 +32,13 @@ namespace UserApi
                 .AddEntityFrameworkStores<UserApiContext>();
 
             services.AddScoped<UserRepository, UserRepository>();
+            services.AddScoped<LoginRepository, LoginRepository>();
+            services.AddScoped<TokenRepository, TokenRepository>();
+            services.AddScoped<LogoutRepository, LogoutRepository>();
 
             services.AddScoped<UserService, UserService>();
+            services.AddScoped<LoginService, LoginService>();
+            services.AddScoped<LogoutService, LogoutService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

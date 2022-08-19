@@ -54,3 +54,7 @@ C:\Users\Birinha\Desktop\C#\MoviesApi\UserApi\obj\Debug\net5.0\refint\UserApi.dl
 C:\Users\Birinha\Desktop\C#\MoviesApi\UserApi\obj\Debug\net5.0\UserApi.pdb
 C:\Users\Birinha\Desktop\C#\MoviesApi\UserApi\obj\Debug\net5.0\UserApi.genruntimeconfig.cache
 C:\Users\Birinha\Desktop\C#\MoviesApi\UserApi\obj\Debug\net5.0\ref\UserApi.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\UserApi\bin\Debug\net5.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\UserApi\bin\Debug\net5.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\UserApi\bin\Debug\net5.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\Birinha\Desktop\C#\MoviesApi\UserApi\bin\Debug\net5.0\System.IdentityModel.Tokens.Jwt.dll
