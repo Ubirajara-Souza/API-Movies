@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using UserApi.Domain.Dtos.Request.Login;
+using UserApi.Domain.Dtos.Request.User;
 using UserApi.Services;
 
 namespace UserApi.Api.Controllers
@@ -26,5 +27,26 @@ namespace UserApi.Api.Controllers
 
             return Ok(result.Successes.FirstOrDefault());
         }
+
+        [HttpPost("/reset-password")]
+        public IActionResult RequestResetPasswordUser([FromBody] ResetPasswordUserRequestDTO resetPasswordUserRequestDTO)
+        {
+            Result result = _loginService.RequestResetPasswordUser(resetPasswordUserRequestDTO);
+            if (result.IsFailed)
+                return Unauthorized(result.Errors.FirstOrDefault());
+
+            return Ok(result.Successes.FirstOrDefault());
+        }
+
+        [HttpPost("/confirm-reset")]
+        public IActionResult ResetPasswordUser([FromBody] ConfirmResetUserRequestDTO confirmResetUserRequestDTO)
+        {
+            Result result = _loginService.ResetPasswordUser(confirmResetUserRequestDTO);
+            if (result.IsFailed)
+                return Unauthorized(result.Errors.FirstOrDefault());
+
+            return Ok(result.Successes.FirstOrDefault());
+        }
     }
 }
+

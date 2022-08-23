@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using UserApi.Domain.Dtos.Request.Login;
+using UserApi.Domain.Dtos.Request.User;
 using UserApi.Domain.Entities;
 using UserApi.Infra.Repositories;
 
@@ -31,6 +32,29 @@ namespace UserApi.Services
             }
 
             return Result.Fail("Login falhou");
+        }
+
+        public Result RequestResetPasswordUser(ResetPasswordUserRequestDTO resetPasswordUserRequestDTO)
+        {
+            IdentityUser<int> identityUser = _loginRepository.RequestResetPasswordUser(resetPasswordUserRequestDTO);
+
+            if (identityUser != null)
+            {
+                string tokenRecovery = _tokenRepository.GeneratePasswordResetToken(identityUser);
+
+                return Result.Ok().WithSuccess(tokenRecovery);
+            }
+
+            return Result.Fail("Falha ao solicitar redefinição");
+        }
+
+        public Result ResetPasswordUser(ConfirmResetUserRequestDTO confirmResetUserRequestDTO)
+        {
+            IdentityResult identityResult = _loginRepository.ResetPasswordUser(confirmResetUserRequestDTO);
+            if (identityResult.Succeeded)
+                return Result.Ok().WithSuccess("Senha redefinida com sucesso!");
+
+            return Result.Fail("Houve um erro na operação");
         }
     }
 }

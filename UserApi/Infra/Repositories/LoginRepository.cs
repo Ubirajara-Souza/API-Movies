@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using UserApi.Domain.Dtos.Request.Login;
+using UserApi.Domain.Dtos.Request.User;
 
 namespace UserApi.Infra.Repositories
 {
@@ -27,6 +28,29 @@ namespace UserApi.Infra.Repositories
                 .FirstOrDefault(user => user.NormalizedUserName == loginRequestDTO.UserName.ToUpper());
 
             return identityUser;
+        }
+
+        public IdentityUser<int> RequestResetPasswordUser(ResetPasswordUserRequestDTO resetPasswordUserRequestDTO)
+        {
+            IdentityUser<int> identityUser = RecoverEmailUser(resetPasswordUserRequestDTO.Email);
+
+            return identityUser;
+        }
+
+        public IdentityResult ResetPasswordUser(ConfirmResetUserRequestDTO confirmResetUserRequestDTO)
+        {
+            IdentityUser<int> identityUser = RecoverEmailUser(confirmResetUserRequestDTO.Email);
+
+            IdentityResult identityResult = _signInManager.UserManager
+                .ResetPasswordAsync(identityUser, confirmResetUserRequestDTO.Token, confirmResetUserRequestDTO.Password).Result;
+
+            return identityResult;
+        }
+
+        private IdentityUser<int> RecoverEmailUser(string email)
+        {
+            return _signInManager.UserManager.Users
+                 .FirstOrDefault(user => user.NormalizedEmail == email.ToUpper());
         }
     }
 }

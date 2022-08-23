@@ -10,6 +10,12 @@ namespace UserApi.Infra.Repositories
 {
     public class TokenRepository
     {
+        private SignInManager<IdentityUser<int>> _signInManager;
+
+        public TokenRepository(SignInManager<IdentityUser<int>> signInManager)
+        {
+            _signInManager = signInManager;
+        }
         public TokenModel CreateToken(IdentityUser<int> user)
         {
             Claim[] rightsUser = new Claim[]
@@ -33,5 +39,13 @@ namespace UserApi.Infra.Repositories
             return new TokenModel(tokenString);
 
         }
+
+        public string GeneratePasswordResetToken(IdentityUser<int> identityUser)
+        {
+            string tokenRecovery = _signInManager.UserManager.GeneratePasswordResetTokenAsync(identityUser).Result;
+
+            return tokenRecovery;
+        }
     }
 }
+
