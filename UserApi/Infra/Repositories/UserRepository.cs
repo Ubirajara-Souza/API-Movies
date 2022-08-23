@@ -26,6 +26,20 @@ namespace UserApi.Infra.Repositories
             return resultIdentity;
         }
 
+        public Task<string> GenerateEmailConfirmationToken(IdentityUser<int> userIdentity)
+        {
+            Task<string> token = _userManager.GenerateEmailConfirmationTokenAsync(userIdentity);
+            return token;
+        }
+
+        public IdentityResult ActiveAccountUser(ActiveAccountUserDTO activeAccountUserDTO)
+        {
+            IdentityUser<int> identityUser = _userManager.Users.FirstOrDefault(u => u.Id == activeAccountUserDTO.UserID);
+            IdentityResult resultIdentity = _userManager.ConfirmEmailAsync(identityUser, activeAccountUserDTO.ActivationCode).Result;
+
+            return resultIdentity;
+        }
+
         public UserModel ListUserById(int id)
         {
             UserModel user = _context.User.FirstOrDefault(user => user.Id == id);

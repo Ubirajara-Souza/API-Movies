@@ -28,13 +28,16 @@ namespace UserApi
             services.AddDbContext<UserApiContext>(opts =>
                        opts.UseLazyLoadingProxies().UseNpgsql(Configuration.GetConnectionString("UserApiConnection")));
 
-            services.AddIdentity<IdentityUser<int>, IdentityRole<int>>()
-                .AddEntityFrameworkStores<UserApiContext>();
+            services.AddIdentity<IdentityUser<int>, IdentityRole<int>>(
+                opt => opt.SignIn.RequireConfirmedEmail = true
+                ).AddEntityFrameworkStores<UserApiContext>()
+                .AddDefaultTokenProviders();
 
             services.AddScoped<UserRepository, UserRepository>();
             services.AddScoped<LoginRepository, LoginRepository>();
             services.AddScoped<TokenRepository, TokenRepository>();
             services.AddScoped<LogoutRepository, LogoutRepository>();
+            services.AddScoped<EmailRepository, EmailRepository>();
 
             services.AddScoped<UserService, UserService>();
             services.AddScoped<LoginService, LoginService>();

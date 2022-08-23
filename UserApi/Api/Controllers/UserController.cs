@@ -1,7 +1,7 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using UserApi.Domain.Dtos.Request.User;
-using UserApi.Domain.Dtos.Response;
 using UserApi.Services;
 
 namespace UserApi.Api.Controllers
@@ -24,19 +24,17 @@ namespace UserApi.Api.Controllers
             if (result.IsFailed)
                 return StatusCode(500);
 
-            return Ok(userDTO);
+            return Ok(result.Successes.FirstOrDefault());
         }
 
-        [HttpGet("{id}")]
-        public IActionResult ListUserById(int id)
+        [HttpGet("/active")]
+        public IActionResult ActiveAccountUser([FromQuery] ActiveAccountUserDTO activeAccountUserDTO)
         {
+            Result result = _userService.ActiveAccountUser(activeAccountUserDTO);
+            if (result.IsFailed)
+                return StatusCode(500);
 
-            UserViews userViews = _userService.ListUserById(id);
-
-            if (userViews != null)
-                return Ok(userViews);
-
-            return NotFound();
+            return Ok(result.Successes);
         }
     }
 }

@@ -1,23 +1,25 @@
 ﻿using AutoMapper;
-using UserApi.Domain.Dtos.Response;
 using UserApi.Domain.Dtos.Request.User;
 using UserApi.Domain.Entities;
 using UserApi.Infra.Repositories;
 using Microsoft.AspNetCore.Identity;
 using FluentResults;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace UserApi.Services
 {
     public class UserService
     {
         private UserRepository _userRepository;
+        private EmailRepository _emailRepository;
         private readonly IMapper _mapper;
 
 
-        public UserService(UserRepository userRepository, IMapper mapper)
+        public UserService(UserRepository userRepository, EmailRepository emailRepository, IMapper mapper)
         {
             _userRepository = userRepository;
+            _emailRepository = emailRepository;
             _mapper = mapper;
         }
 
@@ -29,19 +31,28 @@ namespace UserApi.Services
             Task<IdentityResult> resultIdentity = _userRepository.AddUser(userIdentity, userDTO);
 
             if (resultIdentity.Result.Succeeded)
-                return Result.Ok();
+            {
+                string token = _userRepository.GenerateEmailConfirmationToken(userIdentity).Result;
+                var encodedCode = HttpUtility.UrlEncode(token);
+                _emailRepository.SubmitEmail(new[]
+                {
+                    userIdentity.Email
+                },
+                    "Link de Ativação", userIdentity.Id, token
+                );
+
+                return Result.Ok().WithSuccess(token);
+            }
             return Result.Fail("Falha ao cadastrar usuário");
         }
 
-        public UserViews ListUserById(int id)
+        public Result ActiveAccountUser(ActiveAccountUserDTO activeAccountUserDTO)
         {
-            UserModel User = _userRepository.ListUserById(id);
-            if (User != null)
-            {
-                UserViews userViews = _mapper.Map<UserViews>(User);
-                return userViews;
-            }
-            return null;
+            IdentityResult resultIdentity = _userRepository.ActiveAccountUser(activeAccountUserDTO);
+            if (resultIdentity.Succeeded)
+                return Result.Ok();
+
+            return Result.Fail("Falha ao ativar conta de usuário");
         }
     }
 }
