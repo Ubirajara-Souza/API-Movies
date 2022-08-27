@@ -30,6 +30,13 @@ namespace UserApi.Infra.Repositories
             return identityUser;
         }
 
+        public string GetRolesUser(IdentityUser<int> identityUser)
+        {
+            string role = _signInManager.UserManager.GetRolesAsync(identityUser).Result.FirstOrDefault();
+                
+            return role;
+        }
+
         public IdentityUser<int> RequestResetPasswordUser(ResetPasswordUserRequestDTO resetPasswordUserRequestDTO)
         {
             IdentityUser<int> identityUser = RecoverEmailUser(resetPasswordUserRequestDTO.Email);

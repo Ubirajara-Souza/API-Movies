@@ -15,7 +15,6 @@ namespace UserApi.Services
         private EmailRepository _emailRepository;
         private readonly IMapper _mapper;
 
-
         public UserService(UserRepository userRepository, EmailRepository emailRepository, IMapper mapper)
         {
             _userRepository = userRepository;
@@ -32,16 +31,22 @@ namespace UserApi.Services
 
             if (resultIdentity.Result.Succeeded)
             {
-                string token = _userRepository.GenerateEmailConfirmationToken(userIdentity).Result;
-                var encodedCode = HttpUtility.UrlEncode(token);
-                _emailRepository.SubmitEmail(new[]
-                {
-                    userIdentity.Email
-                },
-                    "Link de Ativação", userIdentity.Id, token
-                );
+                IdentityResult roleUserResult = _userRepository.CreateRoleUserResult(userIdentity);
 
-                return Result.Ok().WithSuccess(token);
+                if (roleUserResult.Succeeded)
+                {
+                    string token = _userRepository.GenerateEmailConfirmationToken(userIdentity).Result;
+                    var encodedCode = HttpUtility.UrlEncode(token);
+                    _emailRepository.SubmitEmail(new[]
+                    {
+                        userIdentity.Email
+                    },
+                        "Link de Ativação", userIdentity.Id, token
+                    );
+
+                    return Result.Ok().WithSuccess(token);
+                }
+                return Result.Fail("Falha ao criar o tipo de perfil do usuário");
             }
             return Result.Fail("Falha ao cadastrar usuário");
         }

@@ -3,14 +3,15 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UserApi.Infra.Repositories.BaseContext;
 
-namespace UserApi.Infra.Migrations
+namespace UserApi.Migrations
 {
     [DbContext(typeof(UserApiContext))]
-    [Migration("20220816231010_CreateTableUser")]
-    partial class CreateTableUser
+    [Migration("20220827142655_UserSimple")]
+    partial class UserSimple
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,6 +47,22 @@ namespace UserApi.Infra.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 99999,
+                            ConcurrencyStamp = "d67f4ec3-0dee-4224-9752-ffcd1c79dfa0",
+                            Name = "admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 99998,
+                            ConcurrencyStamp = "6101e3b4-b3fd-4fb3-955d-692a4f428ca6",
+                            Name = "simple",
+                            NormalizedName = "SIMPLE"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -135,6 +152,24 @@ namespace UserApi.Infra.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 99999,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "d8179a4e-767c-4534-9d9f-5b6cef709f80",
+                            Email = "admin@admin.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@ADMIN.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOanQF/XjPob1XUkVdno8BmTndok7ZNo6ma9JB5AcjjF88iC3vRN1r4WA3aE77hrNQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "820dccde-97a9-4159-af16-c2e0d76508b8",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
@@ -194,6 +229,13 @@ namespace UserApi.Infra.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = 99999,
+                            RoleId = 99999
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -213,26 +255,6 @@ namespace UserApi.Infra.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("UserApi.Domain.Entities.UserModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

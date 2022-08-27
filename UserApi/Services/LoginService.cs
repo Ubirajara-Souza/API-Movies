@@ -26,7 +26,8 @@ namespace UserApi.Services
             if (resultIdentity.Result.Succeeded)
             {
                 IdentityUser<int> identityUser = _loginRepository.IdentityUserReturn(loginRequestDTO);
-                TokenModel token = _tokenRepository.CreateToken(identityUser);
+                string role = _loginRepository.GetRolesUser(identityUser);
+                TokenModel token = _tokenRepository.CreateToken(identityUser, role);
 
                 return Result.Ok().WithSuccess(token.Value);
             }

@@ -1,10 +1,8 @@
-﻿using UserApi.Domain.Entities;
-using UserApi.Infra.Repositories.BaseContext;
+﻿using UserApi.Infra.Repositories.BaseContext;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using UserApi.Domain.Dtos.Request.User;
-using FluentResults;
 
 namespace UserApi.Infra.Repositories
 {
@@ -40,14 +38,14 @@ namespace UserApi.Infra.Repositories
             return resultIdentity;
         }
 
-        public UserModel ListUserById(int id)
+        public IdentityResult CreateRoleUserResult (IdentityUser<int> userIdentity)
         {
-            UserModel user = _context.User.FirstOrDefault(user => user.Id == id);
-            if (user != null)
-            {
-                return user;
-            }
-            return null;
+            IdentityResult roleUserResult = _userManager.AddToRoleAsync(userIdentity, "simple").Result;
+
+            return roleUserResult;
         }
+
+
+
     }
 }

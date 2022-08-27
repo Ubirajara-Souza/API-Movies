@@ -16,12 +16,13 @@ namespace UserApi.Infra.Repositories
         {
             _signInManager = signInManager;
         }
-        public TokenModel CreateToken(IdentityUser<int> user)
+        public TokenModel CreateToken(IdentityUser<int> user, string role)
         {
             Claim[] rightsUser = new Claim[]
             {
                 new Claim("userName", user.UserName),
-                new Claim("Id", user.Id.ToString())
+                new Claim("Id", user.Id.ToString()),
+                new Claim(ClaimTypes.Role, role)    
             };
 
             var key = new SymmetricSecurityKey(
