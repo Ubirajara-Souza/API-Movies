@@ -4,6 +4,7 @@ using MoviesApi.Services;
 using System.Collections.Generic;
 using FluentResults;
 using MoviesApi.Domain.Dtos.Response;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MoviesApi.Api.Controllers
 {
@@ -20,6 +21,7 @@ namespace MoviesApi.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public IActionResult AddMovie([FromBody] MovieDTO movieDTO)
         {
             MovieViews movieViews = _movieService.AddMovie(movieDTO);
@@ -28,13 +30,14 @@ namespace MoviesApi.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin, simple")]
         public IActionResult ListMovie()
         {
             IEnumerable<MovieViews> movieViews = _movieService.ListMovie();
 
             if (movieViews != null)
                 return Ok(movieViews);
-            
+
             return NotFound();
         }
 

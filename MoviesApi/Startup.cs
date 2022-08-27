@@ -9,6 +9,9 @@ using MoviesApi.Infra.Repositories.BaseContext;
 using MoviesApi.Infra.Repositories;
 using MoviesApi.Services;
 using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace MoviesApi
 {
@@ -26,6 +29,25 @@ namespace MoviesApi
         {
             services.AddDbContext<MoviesApiContext>(opts =>
                        opts.UseLazyLoadingProxies().UseNpgsql(Configuration.GetConnectionString("MoviesApiConnection")));
+
+            services.AddAuthentication(auth =>
+            {
+                auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                auth.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(token =>
+            {
+                token.RequireHttpsMetadata = false;
+                token.SaveToken = true;
+                token.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("0asdjas09djsa09djasdjsadajsd09asjd09sajcnzxn")),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
             services.AddScoped<MovieRepository, MovieRepository>();
             services.AddScoped<AddressRepository, AddressRepository>();
@@ -62,6 +84,7 @@ namespace MoviesApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

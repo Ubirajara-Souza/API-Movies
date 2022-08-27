@@ -27,7 +27,7 @@ namespace UserApi.Api.Controllers
             return Ok(result.Successes.FirstOrDefault());
         }
 
-        [HttpGet("/active")]
+        [HttpGet("/active")]  
         public IActionResult ActiveAccountUser([FromQuery] ActiveAccountUserDTO activeAccountUserDTO)
         {
             Result result = _userService.ActiveAccountUser(activeAccountUserDTO);
